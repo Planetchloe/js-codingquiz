@@ -8,17 +8,33 @@ let endScreenEl = document.getElementById('end-screen');
 let sfxRight = new Audio('assets/sfx/correct.wav');
 let sfxWrong = new Audio('assets/sfx/incorrect.wav');
 
+function startQuiz() {
+  displayFeedback("Your quiz is starting!");
+  document.getElementById("start-screen").style.display = "none";
+  questionsEl.style.display = "block";
+
+  startTimer();
+  showStartingTime();
+
+  getQuestion();
+}
+
 function startTimer() {
-  timeLeft = 60;
+  timeLeft = 30;  // Reset time to 30 seconds
   timerId = setInterval(function () {
     document.getElementById("time").textContent = timeLeft.toString();
     if (timeLeft <= 0) {
       clearInterval(timerId);
-      endQuiz();
     } else {
       timeLeft--;
     }
   }, 1000);
+}
+
+function calculateFinalScore() {
+  var maxTime = 30;  // Updated to 30 seconds
+  var score = (timeLeft / maxTime) * 100;
+  return score.toFixed(2);
 }
 
 function showStartingTime() {
@@ -50,17 +66,6 @@ function getQuestion() {
   }
 }
 
-function startQuiz() {
-  displayFeedback("Your quiz is starting!");
-  document.getElementById("start-screen").style.display = "none";
-  questionsEl.style.display = "block";
-
-  startTimer();
-  showStartingTime();
-
-  getQuestion();
-}
-
 function questionClick(event) {
   const clickedButton = event.target;
 
@@ -72,7 +77,7 @@ function questionClick(event) {
     currentQuestionIndex < questions.length &&
     clickedButton.value !== questions[currentQuestionIndex].answer
   ) {
-    timeLeft -= 15;  // Penalize time by subtracting 15 seconds
+    timeLeft -= 30;
     if (timeLeft < 0) {
       timeLeft = 0;
     }
@@ -94,8 +99,6 @@ function questionClick(event) {
   currentQuestionIndex++;
 
   if (timeLeft <= 0 || currentQuestionIndex === questions.length) {
-    quizEnd();
-  } else {
     getQuestion();
   }
 }
@@ -123,13 +126,6 @@ function quizEnd() {
   questionsEl.classList.add("hide");
 
   console.log("Quiz completed!");
-}
-
-function calculateFinalScore() {
-  // Assuming you want to calculate the final score based on the remaining time
-  var maxTime = 60; // Maximum time for full score
-  var score = (timeLeft / maxTime) * 100;
-  return score.toFixed(2);  // Display the score with two decimal places
 }
 
 function clockTick() {
